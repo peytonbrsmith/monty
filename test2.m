@@ -4,4 +4,6 @@ push 3
 pall
 push 4
 pint
+pop
+pall
 

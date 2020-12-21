@@ -50,16 +50,29 @@ void pint(stack_t **stack, unsigned int line_number)
 	if (stack == NULL)
 	{
 		printf("L%d: can't pint, stack empty", line_number);
-		return;
 	}
+	else
+	{
 	current = *stack;
 	printf("%d\n", current->n);
+	}
 }
 
 void pop(stack_t **stack, unsigned int line_number)
 {
-	stack = stack;
-	printf("L%d: OPCODE: %s NODEVAL: %d\n", line_number, "POP", nodeval);
+	stack_t *next, *head = *stack;
+
+	if (stack == NULL)
+	{
+		printf("L%d: can't pop an empty stack", line_number);
+	}
+	else
+	{
+		next = head->next;
+		free(head);
+		next->prev = NULL;
+		*stack = next;
+	}
 }
 
 void swap(stack_t **stack, unsigned int line_number)
