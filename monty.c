@@ -10,6 +10,7 @@ int main(int argc, char **argv)
 	size_t bufsize = 0;
 	ssize_t line_size = 0;
 	unsigned int line_number = 0;
+	int err = 0;
 
 	if (argc > 2 || argc < 2) /* checks for correct usage of monty */
 	{
@@ -26,23 +27,24 @@ int main(int argc, char **argv)
 		stack = NULL;
 		fd = fopen(argv[1], "r"); /* opens file */
 		line_size = getline(&line, &bufsize, fd); /* reads first line */
-		while (line_size >= 0) /* continues reading lines if they exist */
+		while (line_size >= 0 && err == 0) /* continues reading lines if they exist */
 		{
 			line_number++;
 			if (line_size > 1) /* if line isn't blank */
-				parse(line, &stack, line_number);
+			err = parse(line, &stack, line_number);
 			line_size = getline(&line, &bufsize, fd);
 		}
 		if (stack != NULL)
 			free_Stack(&stack); /* if stack isn't empty free it */
 		free(line);
-		line = NULL;
 		fclose(fd); /* close the file */
+		if (err == -1)
+			exit(EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }
 
-void parse(char *line, stack_t **stack, unsigned int line_number)
+int parse(char *line, stack_t **stack, unsigned int line_number)
 {
 	char *linedup = NULL, *opcode = NULL, *value = NULL;
 	char *del = " \t\r\n\f\v";
@@ -58,7 +60,7 @@ void parse(char *line, stack_t **stack, unsigned int line_number)
 			/* Checks if argument is given to non-push opcode*/
 			fprintf(stderr, "L%d: usage %s\n", line_number, opcode);
 			free(linedup);
-			exit(EXIT_FAILURE);
+			return (-1);
 		}
 		nodeval = atoi(value); /* sets nodeval to int */
 	}
@@ -69,11 +71,12 @@ void parse(char *line, stack_t **stack, unsigned int line_number)
 			/* Checks if push doesn't get an argument*/
 			fprintf(stderr, "L%d: usage push integer\n", line_number);
 			free(linedup);
-			exit(EXIT_FAILURE);
+			return (-1);
 		}
 	}
 	chkopcode(opcode, stack, line_number); /* checks if opcode exists */
 	free(linedup);
+	return (0);
 }
 
 void chkopcode(char* opcode, stack_t **stack, unsigned int line_number)
