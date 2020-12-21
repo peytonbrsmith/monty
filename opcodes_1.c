@@ -7,6 +7,10 @@ void push(stack_t **stack, unsigned int line_number)
 	line_number = line_number;
 
 	temp = malloc(sizeof(stack_t));
+	if (temp == NULL)
+	{
+
+	}
 	if (*stack == NULL)
 	{
 		temp->n = nodeval;
@@ -53,8 +57,8 @@ void pint(stack_t **stack, unsigned int line_number)
 	}
 	else
 	{
-	current = *stack;
-	printf("%d\n", current->n);
+		current = *stack;
+		printf("%d\n", current->n);
 	}
 }
 
@@ -77,18 +81,58 @@ void pop(stack_t **stack, unsigned int line_number)
 
 void swap(stack_t **stack, unsigned int line_number)
 {
-	stack = stack;
-	printf("L%d: OPCODE: %s NODEVAL: %d\n", line_number, "SWAP", nodeval);
+	stack_t *head = *stack;
+	stack_t *temp;
+
+	if (head != NULL && head->next != NULL)
+	{
+		temp = head;
+		head = head->next;
+		head->prev = NULL;
+		head->next->prev = temp;
+		temp->next = head->next;
+		head->next = temp;
+		*stack = head;
+	}
+	else
+	{
+	fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
+	}
 }
 
 void add(stack_t **stack, unsigned int line_number)
 {
-	stack = stack;
-	printf("L%d: OPCODE: %s NODEVAL: %d\n", line_number, "ADD", nodeval);
+	stack_t *head = *stack, *temp;
+
+	if (head == NULL || head->next == NULL)
+		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
+	else
+	{
+		head->n += head->next->n;
+		temp = head->next;
+		head->next = temp->next;
+		free(temp);
+	}
+}
+
+void mul(stack_t **stack, unsigned int line_number)
+{
+	stack_t *head = *stack, *temp;
+
+	if (head == NULL || head->next == NULL)
+		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
+	else
+	{
+		head->n *= head->next->n;
+		temp = head->next;
+		head->next = temp->next;
+		free(temp);
+	}
 }
 
 void nop(stack_t **stack, unsigned int line_number)
 {
+	/* purposefully does nothing */
 	stack = stack;
-	printf("L%d: OPCODE: %s NODEVAL: %d\n", line_number, "NOP", nodeval);
+	line_number = line_number;
 }
