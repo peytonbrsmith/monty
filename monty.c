@@ -4,7 +4,7 @@ extern int nodeval;
 
 int main(int argc, char **argv)
 {
-	stack_t **stack = NULL;
+	stack_t *stack;
 	FILE *fd;
 	char *line = NULL;
 	size_t bufsize = 0;
@@ -23,15 +23,18 @@ int main(int argc, char **argv)
 	}
 	else
 	{
+		stack = NULL;
 		fd = fopen(argv[1], "r"); /* opens file */
 		line_size = getline(&line, &bufsize, fd); /* reads first line */
 		while (line_size >= 0) /* continues reading lines if they exist */
 		{
 			line_number++;
 			if (line_size > 1) /* if line isn't blank */
-				parse(line, stack, line_number);
+				parse(line, &stack, line_number);
 			line_size = getline(&line, &bufsize, fd);
 		}
+		if (stack != NULL)
+			free_Stack(&stack); /* if stack isn't empty free it */
 		free(line);
 		line = NULL;
 		fclose(fd); /* close the file */
@@ -48,9 +51,26 @@ void parse(char *line, stack_t **stack, unsigned int line_number)
 
 	opcode = strtok(linedup, del); /* grab opcode */
 	value = strtok(NULL, del); /* grab value if there is one */
-	if (value)
+	if (value != NULL)
 	{
-		nodeval = atoi(value);
+		if (strcmp(opcode, "push") < 0)
+		{
+			/* Checks if argument is given to non-push opcode*/
+			fprintf(stderr, "L%d: usage %s\n", line_number, opcode);
+			free(linedup);
+			exit(EXIT_FAILURE);
+		}
+		nodeval = atoi(value); /* sets nodeval to int */
+	}
+	else
+	{
+		if (strcmp(opcode, "push") == 0)
+		{
+			/* Checks if push doesn't get an argument*/
+			fprintf(stderr, "L%d: usage push integer\n", line_number);
+			free(linedup);
+			exit(EXIT_FAILURE);
+		}
 	}
 	chkopcode(opcode, stack, line_number); /* checks if opcode exists */
 	free(linedup);
@@ -59,9 +79,10 @@ void parse(char *line, stack_t **stack, unsigned int line_number)
 void chkopcode(char* opcode, stack_t **stack, unsigned int line_number)
 {
 	int i;
-	char *ui = "unknown instruction";
+	char *ui = "unknown instruction"; /* to decrease line length */
 
-	instruction_t opcodes[] = { /* opcodes supported */
+	 /* opcodes supported */
+	instruction_t opcodes[] = {
 		{"push", push},
 		{"pop", pop},
 		{"pall", pall},
@@ -70,7 +91,7 @@ void chkopcode(char* opcode, stack_t **stack, unsigned int line_number)
 		{"nop", nop},
 		{NULL, NULL}
 	};
-	for (i = 0; opcodes[i].opcode != NULL; i++)
+	for (i = 0; opcodes[i].opcode != NULL; i++) /* loops through opcodes */
 	{
 		if (strcmp(opcode, opcodes[i].opcode) == 0) /* matches opcode str with func */
 		{
@@ -79,4 +100,17 @@ void chkopcode(char* opcode, stack_t **stack, unsigned int line_number)
 		}
 	}
 	fprintf(stderr, "L%d: %s %s\n", line_number, ui, opcode); /* error if no opcode */
+}
+
+void free_Stack(stack_t **stack)
+{
+	stack_t *current = *stack;
+	stack_t *next;
+
+	while (current != NULL)
+	{
+		next = current->next;
+		free(current);
+		current = next;
+	}
 }
