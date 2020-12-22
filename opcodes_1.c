@@ -1,4 +1,5 @@
 #include "monty.h"
+int nodeval;
 /**
 * push - adds a node to the stack
 * @stack: stack
@@ -14,20 +15,22 @@ void push(stack_t **stack, unsigned int line_number)
 
 	temp = malloc(sizeof(stack_t));
 	if (temp == NULL)
-		exit(EXIT_FAILURE);
+	{
+		fprintf(stderr, "Error: malloc failed\n");
+		return;
+	}
 	if (*stack == NULL)
 	{
 		temp->n = nodeval;
 		temp->next = NULL;
 		temp->prev = NULL;
 		*stack = temp;
-		exit(0);
+		return;
 	}
 	temp->n = nodeval;
 	temp->next = *stack;
 	(*stack)->prev = temp;
 	*stack = temp;
-	exit(0);
 }
 /**
 * pall - prints the stack
@@ -67,7 +70,7 @@ void pint(stack_t **stack, unsigned int line_number)
 
 	if (stack == NULL)
 	{
-		fprintf(stderr, "L%d: can't pint, stack empty", line_number);
+		fprintf(stderr, "L%d: can't pint, stack empty\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 	else

@@ -1,6 +1,5 @@
 #include "monty.h"
-
-extern int nodeval;
+int nodeval;
 /**
 * main - grabs arguments and sends them to be parsed
 * @argc: count of arguments
@@ -99,7 +98,6 @@ int parse(char *line, stack_t **stack, unsigned int line_number)
 int chkopcode(char *opcode, stack_t **stack, unsigned int line_number)
 {
 	int i;
-	char *ui = "unknown instruction"; /* to decrease line length */
 
 	 /* opcodes supported */
 	instruction_t opcodes[] = {
@@ -122,7 +120,7 @@ int chkopcode(char *opcode, stack_t **stack, unsigned int line_number)
 			return (0);
 		}
 	}
-	fprintf(stderr, "L%d: %s %s\n", line_number, ui, opcode);
+	fprintf(stderr, "L%d: unknown instruction %s\n", line_number, opcode);
 	/*opcode check*/
 	return (-1);
 }
