@@ -1,5 +1,11 @@
 #include "monty.h"
-
+/**
+* push - adds a node to the stack
+* @stack: stack
+* @line_number: number of line read from file
+*
+* Return: nothing, but exits with value != 0 on fail
+*/
 void push(stack_t **stack, unsigned int line_number)
 {
 	stack_t *temp = NULL;
@@ -8,24 +14,27 @@ void push(stack_t **stack, unsigned int line_number)
 
 	temp = malloc(sizeof(stack_t));
 	if (temp == NULL)
-	{
-
-	}
+		exit(EXIT_FAILURE);
 	if (*stack == NULL)
 	{
 		temp->n = nodeval;
 		temp->next = NULL;
 		temp->prev = NULL;
 		*stack = temp;
-		return;
+		exit(0);
 	}
 	temp->n = nodeval;
 	temp->next = *stack;
 	(*stack)->prev = temp;
 	*stack = temp;
-	return;
+	exit(0);
 }
-
+/**
+* pall - prints the stack
+* @stack: stack
+* @line_number: line number from read file
+* Return: nothing, but exits != 0 if fail
+*/
 void pall(stack_t **stack, unsigned int line_number)
 {
 	stack_t *current;
@@ -35,7 +44,7 @@ void pall(stack_t **stack, unsigned int line_number)
 	if (stack == NULL)
 	{
 		printf("\n");
-		return;
+		exit(EXIT_FAILURE);
 	}
 	current = *stack;
 	while (current != NULL)
@@ -44,7 +53,12 @@ void pall(stack_t **stack, unsigned int line_number)
 		current = current->next;
 	}
 }
-
+/**
+* pint - prints the node at top of stack
+* @stack: stack
+* @line_number: number of line from read file
+* Return: nothing, exit != 0 on fail
+*/
 void pint(stack_t **stack, unsigned int line_number)
 {
 	stack_t *current;
@@ -54,6 +68,7 @@ void pint(stack_t **stack, unsigned int line_number)
 	if (stack == NULL)
 	{
 		fprintf(stderr, "L%d: can't pint, stack empty", line_number);
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
@@ -61,7 +76,13 @@ void pint(stack_t **stack, unsigned int line_number)
 		printf("%d\n", current->n);
 	}
 }
-
+/**
+* pop - deletes a node from the stack
+* @stack: stack
+* @line_number: line number from read file
+*
+* Return: nothing, exit != 0 on fail
+*/
 void pop(stack_t **stack, unsigned int line_number)
 {
 	stack_t *next, *head = *stack;
@@ -69,6 +90,7 @@ void pop(stack_t **stack, unsigned int line_number)
 	if (stack == NULL)
 	{
 		fprintf(stderr, "L%d: can't pop an empty stack", line_number);
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
@@ -78,7 +100,13 @@ void pop(stack_t **stack, unsigned int line_number)
 		*stack = next;
 	}
 }
-
+/**
+* swap - swaps top elements of the stack
+* @stack: stack
+* @line_number: line number from read file
+*
+* Return: nothing, exit != 0 on fail
+*/
 void swap(stack_t **stack, unsigned int line_number)
 {
 	stack_t *head = *stack;
@@ -96,16 +124,26 @@ void swap(stack_t **stack, unsigned int line_number)
 	}
 	else
 	{
-	fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
+		fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
 	}
 }
-
+/**
+* add - adds top two elements of the stack
+* @stack: stack
+* @line_number: number of line from read file
+*
+* Return: nothing, but exit != 0 on failure
+*/
 void add(stack_t **stack, unsigned int line_number)
 {
 	stack_t *head = *stack, *temp;
 
 	if (head == NULL || head->next == NULL)
+	{
 		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
 	else
 	{
 		head->n += head->next->n;
@@ -114,13 +152,22 @@ void add(stack_t **stack, unsigned int line_number)
 		free(temp);
 	}
 }
-
+/**
+* mul - multiplies two nodes
+* @stack: stack
+* @line_number: line number from read file
+*
+* Return: nothing, but exits with value FAILURE on fail
+*/
 void mul(stack_t **stack, unsigned int line_number)
 {
 	stack_t *head = *stack, *temp;
 
 	if (head == NULL || head->next == NULL)
-		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
+	{
+		fprintf(stderr, "L%d: can't mul, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
 	else
 	{
 		head->n *= head->next->n;
@@ -129,7 +176,12 @@ void mul(stack_t **stack, unsigned int line_number)
 		free(temp);
 	}
 }
-
+/**
+* nop - you ever hear about the funny man
+* @stack: the funny man sat here, counting his grapes
+* @line_number: dont tell anyone, but this is how many toes funny man has
+* Return: nothing
+*/
 void nop(stack_t **stack, unsigned int line_number)
 {
 	/* purposefully does nothing */

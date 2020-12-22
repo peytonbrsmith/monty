@@ -1,7 +1,13 @@
 #include "monty.h"
 
 extern int nodeval;
-
+/**
+* main - grabs arguments and sends them to be parsed
+* @argc: count of arguments
+* @argv: arguments
+*
+* Return: any value !~ 0 fail, otherwise exits with success
+*/
 int main(int argc, char **argv)
 {
 	stack_t *stack;
@@ -26,8 +32,8 @@ int main(int argc, char **argv)
 	{
 		stack = NULL;
 		fd = fopen(argv[1], "r"); /* opens file */
-		line_size = getline(&line, &bufsize, fd); /* reads first line */
-		while (line_size >= 0 && err == 0) /* continues reading lines if they exist */
+		line_size = getline(&line, &bufsize, fd); /*rd first line*/
+		while (line_size >= 0 && err == 0) /* continues reading */
 		{
 			line_number++;
 			if (line_size > 1) /* if line isn't blank */
@@ -43,7 +49,14 @@ int main(int argc, char **argv)
 	}
 	return (EXIT_SUCCESS);
 }
-
+/**
+* parse - parses each argument into tokens and passes them to checker
+* @line: line buffer from user read
+* @stack: stack
+* @line_number: line number from read file
+*
+* Return: -1 on fail, otherwise on success
+*/
 int parse(char *line, stack_t **stack, unsigned int line_number)
 {
 	char *linedup = NULL, *opcode = NULL, *value = NULL, *del = " \t\r\n";
@@ -75,8 +88,15 @@ int parse(char *line, stack_t **stack, unsigned int line_number)
 	}
 	return (-1);
 }
-
-int chkopcode(char* opcode, stack_t **stack, unsigned int line_number)
+/**
+* chkopcode - checks opcodes
+* @opcode: opcode to verify
+* @stack: stack
+* @line_number: line from read file
+*
+* Return: -1 on fail, 0 on success
+*/
+int chkopcode(char *opcode, stack_t **stack, unsigned int line_number)
 {
 	int i;
 	char *ui = "unknown instruction"; /* to decrease line length */
@@ -93,18 +113,25 @@ int chkopcode(char* opcode, stack_t **stack, unsigned int line_number)
 		{"mul", mul},
 		{NULL, NULL}
 	};
-	for (i = 0; opcodes[i].opcode != NULL; i++) /* loops through opcodes */
+	/*loop through opcode*/
+	for (i = 0; opcodes[i].opcode != NULL; i++)
 	{
-		if (strcmp(opcode, opcodes[i].opcode) == 0) /* matches opcode str with func */
+		if (strcmp(opcode, opcodes[i].opcode) == 0)/*finds func*/
 		{
 			opcodes[i].f(stack, line_number);
 			return (0);
 		}
 	}
-	fprintf(stderr, "L%d: %s %s\n", line_number, ui, opcode); /* error if no opcode */
+	fprintf(stderr, "L%d: %s %s\n", line_number, ui, opcode);
+	/*opcode check*/
 	return (-1);
 }
-
+/**
+* free_Stack - frees a doubly linked list, in this case a stack
+* @stack: stack
+*
+* Return: nothing
+*/
 void free_Stack(stack_t **stack)
 {
 	stack_t *current = *stack;
