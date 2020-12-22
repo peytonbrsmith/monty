@@ -7,4 +7,5 @@ push 5
 pint
             nop
 add
-            pall
+pint
+mul 3

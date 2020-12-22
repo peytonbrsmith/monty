@@ -13,7 +13,8 @@ void add(stack_t **stack, unsigned int line_number)
 	if (head == NULL || head->next == NULL)
 	{
 		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
-		exit(EXIT_FAILURE);
+		errno = -1;
+		return;
 	}
 	else
 	{
@@ -37,7 +38,8 @@ void mul(stack_t **stack, unsigned int line_number)
 	if (head == NULL || head->next == NULL)
 	{
 		fprintf(stderr, "L%d: can't mul, stack too short\n", line_number);
-		exit(EXIT_FAILURE);
+		errno = -1;
+		return;
 	}
 	else
 	{

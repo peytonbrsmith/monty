@@ -15,7 +15,6 @@ int main(int argc, char **argv)
 	size_t bufsize = 0;
 	ssize_t line_size = 0;
 	unsigned int line_number = 0;
-	int err = 0;
 
 	if (argc > 2 || argc < 2) /* checks for correct usage of monty */
 	{
@@ -32,18 +31,18 @@ int main(int argc, char **argv)
 		stack = NULL;
 		fd = fopen(argv[1], "r"); /* opens file */
 		line_size = getline(&line, &bufsize, fd); /*rd first line*/
-		while (line_size >= 0 && err == 0) /* continues reading */
+		while (line_size >= 0 && errno == 0) /* continues reading */
 		{
 			line_number++;
 			if (line_size > 1) /* if line isn't blank */
-			err = parse(line, &stack, line_number);
+			errno = parse(line, &stack, line_number);
 			line_size = getline(&line, &bufsize, fd);
 		}
 		if (stack != NULL)
 			free_Stack(&stack); /* if stack isn't empty free it */
 		free(line);
 		fclose(fd); /* close the file */
-		if (err == -1)
+		if (errno != 0)
 			exit(EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
@@ -85,6 +84,7 @@ int parse(char *line, stack_t **stack, unsigned int line_number)
 		free(linedup);
 		return (0);
 	}
+	free(linedup);
 	return (-1);
 }
 /**
@@ -116,13 +116,12 @@ int chkopcode(char *opcode, stack_t **stack, unsigned int line_number)
 	{
 		if (strcmp(opcode, opcodes[i].opcode) == 0)/*finds func*/
 		{
-			opcodes[i].f(stack, line_number);
-			return (0);
+			opcodes[i].f(stack, line_number); /*opcode check*/
+			return (errno);
 		}
 	}
 	fprintf(stderr, "L%d: unknown instruction %s\n", line_number, opcode);
-	/*opcode check*/
-	return (-1);
+	return (errno);
 }
 /**
 * free_Stack - frees a doubly linked list, in this case a stack
