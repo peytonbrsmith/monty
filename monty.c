@@ -121,6 +121,7 @@ int chkopcode(char *opcode, stack_t **stack, unsigned int line_number)
 		}
 	}
 	fprintf(stderr, "L%d: unknown instruction %s\n", line_number, opcode);
+	errno = -1;
 	return (errno);
 }
 /**
