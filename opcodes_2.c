@@ -62,13 +62,13 @@ void nop(stack_t **stack, unsigned int line_number)
 	(void) line_number;
 }
 /**
-* div - divides the first two nodes of the stack
+* _div - divides the first two nodes of the stack
 * @stack: stack of data
 * @line_number: number_line from read file
 *
 * Return: nothing
 */
-void div(stack_t **stack, unsigned int line_number)
+void _div(stack_t **stack, unsigned int line_number)
 {
 	stack_t *head = *stack, *temp;
 
