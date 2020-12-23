@@ -18,10 +18,8 @@ void add(stack_t **stack, unsigned int line_number)
 	}
 	else
 	{
-		head->n += head->next->n;
-		temp = head->next;
-		head->next = temp->next;
-		free(temp);
+		head->next->n += head->n;
+		pop(stack, line_number);
 	}
 }
 /**
