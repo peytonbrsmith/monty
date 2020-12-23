@@ -58,6 +58,56 @@ void mul(stack_t **stack, unsigned int line_number)
 void nop(stack_t **stack, unsigned int line_number)
 {
 	/* purposefully does nothing */
-	stack = stack;
-	line_number = line_number;
+	(void) stack;
+	(void) line_number;
+}
+/**
+* div - divides the first two nodes of the stack
+* @stack: stack of data
+* @line_number: number_line from read file
+*
+* Return: nothing
+*/
+void div(stack_t **stack, unsigned int line_number)
+{
+	stack_t *head = *stack, *temp;
+
+	if (head == NULL || head->next == NULL)
+	{
+		fprintf(stderr, "L%d: can't div, stack too short\n", line_number);
+		errno = -1;
+		return;
+	}
+	else
+	{
+		head->n /= head->next->n;
+		temp = head->next;
+		head->next = temp->next;
+		free(temp);
+	}
+}
+/**
+* sub - subtracts the first two nodes of the stack
+* @stack: stack of data
+* @line_number: line_number from read file
+*
+* Return: nothing
+*/
+void sub(stack_t **stack, unsigned int line_number)
+{
+	stack_t *head = *stack, *temp;
+
+	if (head == NULL || head->next == NULL)
+	{
+		fprintf(stderr, "L%d: can't mul, stack too short\n", line_number);
+		errno = -1;
+		return;
+	}
+	else
+	{
+		head->n *= head->next->n;
+		temp = head->next;
+		head->next = temp->next;
+		free(temp);
+	}
 }
